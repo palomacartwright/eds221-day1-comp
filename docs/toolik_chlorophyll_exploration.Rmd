@@ -1,0 +1,57 @@
+---
+title: "Toolik Chrlorophyll Concentrations"
+author: "Paloma Cartwright"
+date: "09/08/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(skimr)
+```
+
+## Read in toolik_chlorophyll.csv as a data frame stored as `toolik_cholorphyll`
+
+Use read_csv 
+```{r}
+toolik_chlorophyll <- read_csv(here::here("data", "data-raw", 
+                                           "toolik_chlorophyll.csv"), 
+                               na = ".")
+```
+
+Explore the imported data with `skimr::skim()`, `names()`, `dim()`, `summary()`
+
+```{r}
+skimr::skim(toolik_chlorophyll)
+names(toolik_chlorophyll)
+dim(toolik_chlorophyll)
+summary(toolik_chlorophyll)
+
+```
+Overwrite the existing toolik chlorophyll with a new version with lower snake case
+
+```{r}
+toolik_chlorophyll <- toolik_chlorophyll %>% clean_names()
+```
+
+## Create a scatter plot of depth versus chlorophyll A concentration. 
+- make point size `size`  changed based on the concentration 
+- Make all the points "cyan4"
+- Update the theme to `theme_dark()`
+
+```{r}
+toolik_chlorophyll_plot <- ggplot(data = toolik_chlorophyll,
+                                  aes(x = active_chl_a_ug_l, y = depth)) +
+  geom_point(aes(size = active_chl_a_ug_l, color = depth))
+
+toolik_chlorophyll_plot
+
+```
+
+```{r}
+ggsave(here::here("figs", "chlorophyll_graph.jpg"), plot = toolik_chlorophyll_plot)
+```
+
